@@ -74,3 +74,9 @@
       .btn.ghost:hover{background:#fff;color:var(--green)}
       .floating-cta:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(0,0,0,.22)}
     }
+
+    /* Company differentiators */
+    .differentials{background:var(--paper)}
+    .differentials .process-header{max-width:980px}
+    .differentials .process-step h3{transform:none!important}
+    .differentials .process-step .result{max-width:280px}
