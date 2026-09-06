@@ -5,11 +5,35 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const main = document.getElementById('conteudo');
     const footer = document.getElementById('siteFooter');
-    const hero = document.getElementById('inicio');
-    const persistentCtas = [document.getElementById('floatingCta'), document.getElementById('mobileCta')].filter(Boolean);
+    const floatingCta = document.getElementById('floatingCta');
+    const mobileCta = document.getElementById('mobileCta');
+    const persistentCtas = [floatingCta, mobileCta].filter(Boolean);
     const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canObserve = 'IntersectionObserver' in window;
+    const WHATSAPP_NUMBER = '5591993333032';
+    const INSTAGRAM_URL = 'https://instagram.com/nove.br';
+    const DEFAULT_WHATSAPP_MESSAGE = 'Olá, NOVE! Vim pelo site e gostaria de entender qual solução faz mais sentido para o meu espaço.';
     let lastFocus = null;
+
+    function whatsappUrl(message) {
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    }
+
+    persistentCtas.forEach(el => el.classList.add('is-visible'));
+    if (floatingCta) {
+      floatingCta.href = whatsappUrl(DEFAULT_WHATSAPP_MESSAGE);
+      floatingCta.target = '_blank';
+      floatingCta.rel = 'noopener';
+      floatingCta.innerHTML = '<i aria-hidden="true"></i> Falar no WhatsApp';
+      floatingCta.setAttribute('aria-label', 'Falar com a NOVE pelo WhatsApp');
+    }
+    if (mobileCta) {
+      mobileCta.href = whatsappUrl(DEFAULT_WHATSAPP_MESSAGE);
+      mobileCta.target = '_blank';
+      mobileCta.rel = 'noopener';
+      mobileCta.innerHTML = '<span>Falar no WhatsApp</span><span class="arrow-mark" aria-hidden="true"></span>';
+      mobileCta.setAttribute('aria-label', 'Falar com a NOVE pelo WhatsApp');
+    }
 
     if (canObserve) {
       const headerObserver = new IntersectionObserver(([entry]) => {
@@ -18,15 +42,6 @@
       headerObserver.observe(sentinel);
     } else {
       header.classList.add('scrolled');
-    }
-
-    if (canObserve && hero) {
-      const ctaObserver = new IntersectionObserver(([entry]) => {
-        persistentCtas.forEach(el => el.classList.toggle('is-visible', !entry.isIntersecting));
-      }, { threshold: 0 });
-      ctaObserver.observe(hero);
-    } else {
-      persistentCtas.forEach(el => el.classList.add('is-visible'));
     }
 
     function focusables(container) {
@@ -175,56 +190,28 @@
     const focusBrief = document.getElementById('focusBrief');
     const form = document.getElementById('briefForm');
     const status = document.getElementById('contactStatus');
-    const WHATSAPP_NUMBER = '';
-    const INSTAGRAM_URL = 'https://instagram.com/nove.br';
+
+    if (form && !document.getElementById('uso')) {
+      const submitField = form.querySelector('.brief-submit')?.closest('.field');
+      const useField = document.createElement('div');
+      useField.className = 'field';
+      useField.innerHTML = '<label for="uso">Uso do espaço</label><input id="uso" name="uso" placeholder="Ex.: lazer com crianças e pets" autocomplete="off" />';
+      if (submitField) form.insertBefore(useField, submitField);
+    }
 
     focusBrief.addEventListener('click', () => document.getElementById('tipo').focus({ preventScroll: false }));
-
-    function copyFallback(text) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.setAttribute('readonly', '');
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      const copied = document.execCommand('copy');
-      textarea.remove();
-      return copied;
-    }
 
     form.addEventListener('submit', event => {
       event.preventDefault();
       const tipo = document.getElementById('tipo').value;
-      const cidade = document.getElementById('cidade').value.trim() || 'não informado';
+      const uso = document.getElementById('uso')?.value.trim() || 'não informado';
+      const cidade = document.getElementById('cidade').value.trim() || 'não informada';
       const medida = document.getElementById('medida').value.trim() || 'não informada';
-      const message = `Olá, NOVE. Quero solicitar uma análise para meu projeto.\n\nTipo de espaço: ${tipo}\nCidade: ${cidade}\nMedida aproximada: ${medida}\n\nPodem me orientar sobre a melhor solução?`;
+      const message = `Olá! 👋 Vim pelo site da *NOVE* e gostaria de solicitar uma análise para o meu espaço.\n\n*BRIEFING DO PROJETO*\n• Tipo de espaço: ${tipo}\n• Uso do espaço: ${uso}\n• Cidade: ${cidade}\n• Medida aproximada: ${medida}\n\nPodem me orientar sobre a solução mais indicada e os próximos passos?`;
 
-      if (WHATSAPP_NUMBER) {
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
-        status.textContent = 'Abrimos o WhatsApp com o briefing preenchido.';
-        status.dataset.state = 'success';
-        return;
-      }
-
-      const write = navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(message) : Promise.resolve(copyFallback(message));
-      function showInstagramStatus(prefix) {
-        status.replaceChildren();
-        status.append(document.createTextNode(prefix + ' '));
-        const link = document.createElement('a');
-        link.href = INSTAGRAM_URL;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        link.textContent = 'Instagram @nove.br';
-        status.append(link, document.createTextNode('.'));
-        status.dataset.state = 'success';
-      }
-
-      Promise.resolve(write).then(() => {
-        showInstagramStatus('Briefing copiado. Envie para a NOVE pelo');
-      }).catch(() => {
-        showInstagramStatus('Não foi possível copiar automaticamente. Abra o');
-      });
+      window.open(whatsappUrl(message), '_blank', 'noopener');
+      status.textContent = 'Abrimos o WhatsApp com seu briefing organizado e pronto para enviar.';
+      status.dataset.state = 'success';
     });
 
     document.getElementById('year').textContent = new Date().getFullYear();
