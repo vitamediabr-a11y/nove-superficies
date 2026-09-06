@@ -11,13 +11,16 @@
     const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canObserve = 'IntersectionObserver' in window;
     const WHATSAPP_NUMBER = '5591993333032';
-    const INSTAGRAM_URL = 'https://instagram.com/nove.br';
     const DEFAULT_WHATSAPP_MESSAGE = 'Olá, NOVE! Vim pelo site e gostaria de entender qual solução faz mais sentido para o meu espaço.';
     let lastFocus = null;
 
     function whatsappUrl(message) {
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     }
+
+    const briefingLayout = document.createElement('style');
+    briefingLayout.textContent = '@media (min-width:821px){.brief-form{grid-template-columns:repeat(5,1fr)}}';
+    document.head.appendChild(briefingLayout);
 
     persistentCtas.forEach(el => el.classList.add('is-visible'));
     if (floatingCta) {
