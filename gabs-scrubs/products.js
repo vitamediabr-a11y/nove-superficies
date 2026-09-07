@@ -294,34 +294,76 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
     document.querySelectorAll('#checkout-btn').forEach(button=>{
       button.textContent='Finalizar pelo WhatsApp';
       button.removeAttribute('disabled');
-      button.setAttribute('aria-label','Enviar pedido da sacola pelo WhatsApp');
+      button.setAttribute('aria-label','Escolher WhatsApp para enviar o pedido');
     });
   }
 
-  function openWhatsApp(message){
-    const encoded=encodeURIComponent(message);
-    const webUrl=`https://api.whatsapp.com/send?phone=${whatsappPhone}&text=${encoded}`;
-    const deepUrl=`whatsapp://send?phone=${whatsappPhone}&text=${encoded}`;
-    const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+  function closeChooser(){
+    document.getElementById('gabs-whatsapp-chooser')?.remove();
+  }
 
-    if(!isIOS){
-      window.location.href=webUrl;
+  function copyOrder(message,button){
+    const done=()=>{
+      const previous=button.textContent;
+      button.textContent='Pedido copiado';
+      setTimeout(()=>button.textContent=previous,1600);
+    };
+    if(navigator.clipboard?.writeText){
+      navigator.clipboard.writeText(message).then(done).catch(()=>{});
       return;
     }
+    const area=document.createElement('textarea');
+    area.value=message;
+    area.style.position='fixed';
+    area.style.opacity='0';
+    document.body.appendChild(area);
+    area.select();
+    try{document.execCommand('copy');done();}catch{}
+    area.remove();
+  }
 
-    let fallbackTimer=0;
-    const stopFallback=()=>{
-      if(fallbackTimer){clearTimeout(fallbackTimer);fallbackTimer=0;}
-      document.removeEventListener('visibilitychange',handleVisibility);
-    };
-    const handleVisibility=()=>{if(document.hidden) stopFallback();};
-    document.addEventListener('visibilitychange',handleVisibility);
-    fallbackTimer=window.setTimeout(()=>{
-      document.removeEventListener('visibilitychange',handleVisibility);
-      window.location.href=webUrl;
-    },1400);
+  function showChooser(message){
+    closeChooser();
+    const encoded=encodeURIComponent(message);
+    const normalUrl=`https://wa.me/${whatsappPhone}?text=${encoded}`;
+    const businessUrl=`whatsapp://send?phone=${whatsappPhone}&text=${encoded}`;
 
-    window.location.href=deepUrl;
+    const overlay=document.createElement('div');
+    overlay.id='gabs-whatsapp-chooser';
+    overlay.setAttribute('role','dialog');
+    overlay.setAttribute('aria-modal','true');
+    overlay.setAttribute('aria-label','Escolher aplicativo do WhatsApp');
+    overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.42);display:flex;align-items:flex-end;justify-content:center;padding:16px max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));';
+
+    const sheet=document.createElement('div');
+    sheet.style.cssText='width:min(100%,520px);background:#fffdfa;color:#151515;border:1px solid #d9d4cb;padding:22px 18px 18px;box-shadow:0 18px 60px rgba(0,0,0,.22);font-family:Tenor Sans,Arial,sans-serif;';
+    sheet.innerHTML=`
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px">
+        <div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6c6962;margin-bottom:8px">Finalizar pedido</div><div style="font-family:Italiana,Georgia,serif;font-size:28px;line-height:1.05">Onde você quer abrir?</div></div>
+        <button type="button" data-wa-close aria-label="Fechar" style="border:0;background:transparent;width:44px;height:44px;font-size:28px;line-height:1;cursor:pointer">×</button>
+      </div>
+      <div style="display:grid;gap:10px">
+        <a data-wa-normal href="${normalUrl}" target="_blank" rel="noopener" style="min-height:54px;display:flex;align-items:center;justify-content:center;background:#11110f;color:#fff;text-decoration:none;font-size:13px;letter-spacing:.08em;text-transform:uppercase">WhatsApp</a>
+        <button type="button" data-wa-business style="min-height:54px;border:1px solid #151515;background:transparent;color:#151515;font:inherit;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer">WhatsApp Business</button>
+        <button type="button" data-wa-copy style="min-height:48px;border:0;background:transparent;color:#6c6962;font:inherit;text-decoration:underline;cursor:pointer">Copiar pedido</button>
+      </div>`;
+
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click',event=>{
+      if(event.target===overlay||event.target.closest('[data-wa-close]')) closeChooser();
+      const business=event.target.closest('[data-wa-business]');
+      if(business){
+        event.preventDefault();
+        window.location.href=businessUrl;
+      }
+      const copy=event.target.closest('[data-wa-copy]');
+      if(copy){
+        event.preventDefault();
+        copyOrder(message,copy);
+      }
+    });
   }
 
   document.addEventListener('DOMContentLoaded',simplifyCheckout);
@@ -338,6 +380,6 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
       return;
     }
 
-    openWhatsApp(message);
+    showChooser(message);
   },true);
 })();
