@@ -56,3 +56,36 @@
 @media (max-width:520px){.hero-model::after{left:16px;bottom:102px;max-width:14ch;font-size:23px;line-height:1.04}.hero-marquee-copy .container{padding:0 16px 46px!important}.hero-marquee-copy .hero-actions .btn{min-height:40px!important;font-size:8.7px!important}.hero-arrow{top:47%;width:38px;height:38px}.hero-arrow svg{width:17px;height:17px}}
 @media (max-width:360px){.hero-model::after{left:14px;bottom:98px;max-width:13ch;font-size:21px}.hero-marquee-copy .container{padding-left:14px!important;padding-right:14px!important;padding-bottom:44px!important}.hero-marquee-copy .hero-actions .btn{min-height:39px!important;font-size:8.2px!important;padding-inline:4px!important}.hero-pagination{gap:6px}}
 @media (prefers-reduced-motion:reduce){.hero-marquee-track{scroll-behavior:auto!important}.hero-dot,.hero-arrow{transition:none}}
+
+
+/* HQ Gabs photography v2 — originals preserved, CSS crop only */
+.hero-model:nth-child(-n+6){background-image:none!important}
+.hero-model img{opacity:1!important;z-index:0!important;object-fit:cover!important}
+.hero-model:nth-child(1) img{object-position:center 20%!important}
+.hero-model:nth-child(2) img{object-position:center 18%!important}
+.hero-model:nth-child(3) img{object-position:center 16%!important}
+.hero-model:nth-child(4) img{object-position:center 24%!important}
+.hero-model:nth-child(5) img{object-position:center 22%!important}
+.hero-model:nth-child(6) img{object-position:center 50%!important}
+.hero-model:nth-child(1)::after{content:'Feito para vestir bem.'!important}
+.hero-model:nth-child(2)::after{content:'Leve no corpo.'!important}
+.hero-model:nth-child(3)::after{content:'Cor que sai do automático.'!important}
+.hero-model:nth-child(4)::after{content:'Para horas em movimento.'!important}
+.hero-model:nth-child(5)::after{content:'Uma equipe. A mesma identidade.'!important}
+.hero-model:nth-child(6)::after{content:'O detalhe muda tudo.'!important}
+.categories .category-tile:first-child,
+.categories .category-tile.wide,
+.editorial-media,
+.look{background-image:none!important}
+.categories .category-tile:first-child>img,
+.categories .category-tile.wide>img,
+.editorial-media>img,
+.look>img{opacity:1!important}
+@media (max-width:820px){
+  .hero-model:nth-child(1) img{object-position:center 18%!important}
+  .hero-model:nth-child(2) img{object-position:center 17%!important}
+  .hero-model:nth-child(3) img{object-position:center 16%!important}
+  .hero-model:nth-child(4) img{object-position:center 22%!important}
+  .hero-model:nth-child(5) img{object-position:center 20%!important}
+  .hero-model:nth-child(6) img{object-position:center 50%!important}
+}
