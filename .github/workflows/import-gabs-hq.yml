@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - '.github/workflows/import-gabs-hq.yml'
+      - '.github/scripts/import-gabs-hq.sh'
 
 permissions:
   contents: write
