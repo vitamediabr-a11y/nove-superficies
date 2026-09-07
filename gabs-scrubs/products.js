@@ -166,3 +166,90 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
     track.scrollLeft=activeIndex*track.clientWidth;
   },{passive:true});
 })();
+
+(function initHeroAutoplayAndArrows(){
+  const hero=document.querySelector('.hero-marquee');
+  const track=hero?.querySelector('.hero-marquee-track');
+  if(!hero||!track) return;
+
+  const slides=[...track.querySelectorAll('.hero-model')].filter((_,index)=>index<6);
+  if(slides.length<2) return;
+
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const autoplayDelay=4800;
+  const interactionPause=7500;
+  let timer=0;
+
+  const currentIndex=()=>{
+    const width=track.clientWidth||1;
+    return Math.max(0,Math.min(slides.length-1,Math.round(track.scrollLeft/width)));
+  };
+
+  const goTo=index=>{
+    const normalized=(index+slides.length)%slides.length;
+    track.scrollTo({left:normalized*track.clientWidth,behavior:reducedMotion?'auto':'smooth'});
+  };
+
+  const clearAutoplay=()=>{
+    if(timer){
+      clearTimeout(timer);
+      timer=0;
+    }
+  };
+
+  const scheduleAutoplay=(delay=autoplayDelay)=>{
+    clearAutoplay();
+    if(reducedMotion||document.hidden) return;
+    timer=window.setTimeout(()=>{
+      goTo(currentIndex()+1);
+      scheduleAutoplay(autoplayDelay);
+    },delay);
+  };
+
+  const pauseAfterInteraction=()=>scheduleAutoplay(interactionPause);
+
+  const makeArrow=(direction,label,path)=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.className=`hero-arrow hero-arrow-${direction}`;
+    button.setAttribute('aria-label',label);
+    button.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"></path></svg>`;
+    button.addEventListener('click',event=>{
+      event.preventDefault();
+      event.stopPropagation();
+      clearAutoplay();
+      goTo(currentIndex()+(direction==='next'?1:-1));
+      pauseAfterInteraction();
+    });
+    hero.appendChild(button);
+  };
+
+  makeArrow('prev','Imagem anterior','M15 18l-6-6 6-6');
+  makeArrow('next','Próxima imagem','M9 6l6 6-6 6');
+
+  hero.addEventListener('click',event=>{
+    if(event.target.closest('.hero-dot')) pauseAfterInteraction();
+  });
+
+  track.addEventListener('touchstart',clearAutoplay,{passive:true});
+  track.addEventListener('touchend',pauseAfterInteraction,{passive:true});
+  track.addEventListener('pointerdown',event=>{
+    if(event.pointerType!=='touch') clearAutoplay();
+  },{passive:true});
+  track.addEventListener('pointerup',event=>{
+    if(event.pointerType!=='touch') pauseAfterInteraction();
+  },{passive:true});
+  track.addEventListener('wheel',()=>pauseAfterInteraction(),{passive:true});
+
+  hero.addEventListener('mouseenter',clearAutoplay);
+  hero.addEventListener('mouseleave',()=>scheduleAutoplay(autoplayDelay));
+  hero.addEventListener('focusin',clearAutoplay);
+  hero.addEventListener('focusout',()=>scheduleAutoplay(autoplayDelay));
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) clearAutoplay();
+    else scheduleAutoplay(autoplayDelay);
+  });
+
+  scheduleAutoplay(autoplayDelay);
+})();
