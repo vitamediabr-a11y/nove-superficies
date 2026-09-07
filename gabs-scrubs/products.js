@@ -255,7 +255,7 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
 })();
 
 (function initWhatsAppCartCheckout(){
-  const whatsappBase='https://wa.me/message/4ITMQF2GQOCH01';
+  const whatsappBase='https://wa.me/5591992814885';
   const formatMoney=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
 
   function readCart(){
