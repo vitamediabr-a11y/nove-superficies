@@ -18,30 +18,36 @@ download '1i-cKPYmJWbF45rWpiqMZaYZu-598FJM1' 'gabs-scrubs/assets/gabs-hq/hero-bl
 download '1_1-LSa0QjKwR_eX3kqFEC2kaah9z5OoY' 'gabs-scrubs/assets/gabs-hq/hero-team-navy-v2.png'
 download '18YINwRaS163YYqmMCaRvxTSYYXtOa_dJ' 'gabs-scrubs/assets/gabs-hq/detail-sleeve-v2.png'
 
+python -m pip install --quiet pillow
+
 python - <<'PY'
 from pathlib import Path
-import hashlib, struct, re
+from PIL import Image
+import hashlib, re
 
 base = Path('gabs-scrubs/assets/gabs-hq')
 expected = {
-    'hero-beige-mirror-v2.png': 1888389,
-    'hero-beige-portrait-v2.png': 3214921,
-    'hero-red-v2.png': 3083019,
-    'hero-blue-client-v2.png': 3274564,
-    'hero-team-navy-v2.png': 2898296,
-    'detail-sleeve-v2.png': 3065008,
+    'hero-beige-mirror-v2.png': ('b2702017c532e408d3cf212548208fcb0d3fe15e6da8050eadf55ba3a0d09623', 1888389),
+    'hero-beige-portrait-v2.png': ('01530410b714a80adafcea78634a58e3419fc09e065132b3ad92b04b2ba3808e', 3214921),
+    'hero-red-v2.png': ('19461e7b821ff82cf6af9184fac278f2144ee4271b06988e8e8857f31450acaa', 3083019),
+    'hero-blue-client-v2.png': ('5f579a699a0926de8863a17602cb34dae5a579ba3eae05ea91c166bfe072914f', 3274564),
+    'hero-team-navy-v2.png': ('56e4a9ef61f1b2d79ded7fb2b1e7255fb5b05a91c68ab1cae4b1bbe6241bfdd5', 2898296),
+    'detail-sleeve-v2.png': ('3659d590027aaf71dd708cbedba3f8d987cf6f146ac5f88a079d5bf303e069e2', 3065008),
 }
-for name, expected_size in expected.items():
+for name, (expected_pixels, original_size) in expected.items():
     p = base / name
     data = p.read_bytes()
-    if len(data) != expected_size:
-        raise SystemExit(f'{name}: unexpected size {len(data)}; expected {expected_size}')
+    if len(data) < 500_000:
+        raise SystemExit(f'{name}: downloaded file is suspiciously small ({len(data)} bytes)')
     if data[:8] != b'\x89PNG\r\n\x1a\n':
         raise SystemExit(f'{name}: not a PNG')
-    width, height = struct.unpack('>II', data[16:24])
-    if (width, height) != (1122, 1402):
-        raise SystemExit(f'{name}: unexpected dimensions {(width, height)}')
-    print(f'{name}: {len(data)} bytes, {width}x{height}, sha256={hashlib.sha256(data).hexdigest()}')
+    with Image.open(p) as im:
+        if im.size != (1122, 1402):
+            raise SystemExit(f'{name}: unexpected dimensions {im.size}')
+        pixel_hash = hashlib.sha256(im.convert('RGB').tobytes()).hexdigest()
+    if pixel_hash != expected_pixels:
+        raise SystemExit(f'{name}: pixel data changed in transit')
+    print(f'{name}: {len(data)} bytes (Drive original {original_size}), 1122x1402, pixel-sha256={pixel_hash}')
 
 index = Path('gabs-scrubs/index.html')
 html = index.read_text(encoding='utf-8')
@@ -124,5 +130,5 @@ git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 git add gabs-scrubs/assets/gabs-hq gabs-scrubs/index.html gabs-scrubs/hero-slider.css
 git diff --cached --stat
-git commit -m 'Publish original HQ Gabs photography'
+git commit -m 'Publish lossless HQ Gabs photography'
 git push origin HEAD:main
