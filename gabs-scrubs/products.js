@@ -255,7 +255,7 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
 })();
 
 (function initWhatsAppCartCheckout(){
-  const whatsappBase='https://wa.me/5591992814885';
+  const whatsappPhone='5591992814885';
   const formatMoney=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
 
   function readCart(){
@@ -287,9 +287,10 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
     return lines.join('\n');
   }
 
-  function simplifyCartFooter(){
+  function simplifyCheckout(){
     document.querySelectorAll('#freight-progress').forEach(el=>el.closest('.progress')?.remove());
     document.querySelectorAll('#freight-copy').forEach(el=>el.remove());
+    document.querySelectorAll('#cep').forEach(el=>el.closest('.option-block')?.remove());
     document.querySelectorAll('#checkout-btn').forEach(button=>{
       button.textContent='Finalizar pelo WhatsApp';
       button.removeAttribute('disabled');
@@ -297,7 +298,33 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
     });
   }
 
-  document.addEventListener('DOMContentLoaded',simplifyCartFooter);
+  function openWhatsApp(message){
+    const encoded=encodeURIComponent(message);
+    const webUrl=`https://api.whatsapp.com/send?phone=${whatsappPhone}&text=${encoded}`;
+    const deepUrl=`whatsapp://send?phone=${whatsappPhone}&text=${encoded}`;
+    const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if(!isIOS){
+      window.location.href=webUrl;
+      return;
+    }
+
+    let fallbackTimer=0;
+    const stopFallback=()=>{
+      if(fallbackTimer){clearTimeout(fallbackTimer);fallbackTimer=0;}
+      document.removeEventListener('visibilitychange',handleVisibility);
+    };
+    const handleVisibility=()=>{if(document.hidden) stopFallback();};
+    document.addEventListener('visibilitychange',handleVisibility);
+    fallbackTimer=window.setTimeout(()=>{
+      document.removeEventListener('visibilitychange',handleVisibility);
+      window.location.href=webUrl;
+    },1400);
+
+    window.location.href=deepUrl;
+  }
+
+  document.addEventListener('DOMContentLoaded',simplifyCheckout);
 
   document.addEventListener('click',event=>{
     const button=event.target.closest('#checkout-btn');
@@ -311,6 +338,6 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
       return;
     }
 
-    window.location.href=`${whatsappBase}?text=${encodeURIComponent(message)}`;
+    openWhatsApp(message);
   },true);
 })();
