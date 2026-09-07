@@ -1,5 +1,6 @@
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+if(!document.querySelector('link[data-mobile-nav]')){const l=document.createElement('link');l.rel='stylesheet';l.href='mobile.css';l.dataset.mobileNav='true';document.head.appendChild(l);}
 const money = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
 
 const state = {
@@ -87,10 +88,48 @@ function renderCart(){
   const copy=$('#freight-copy'); if(copy) copy.textContent= total>=399 ? 'Faixa de frete grátis atingida na configuração de staging.' : `Faltam ${money(399-total)} para a faixa configurada de frete grátis.`;
 }
 
-function openCart(){ $('#cart-overlay')?.classList.add('open'); document.body.style.overflow='hidden'; }
-function closeCart(){ $('#cart-overlay')?.classList.remove('open'); document.body.style.overflow=''; }
-function openSearch(){ $('#search-panel')?.classList.add('open'); document.body.style.overflow='hidden'; setTimeout(()=>$('#search-input')?.focus(),80); renderSearch(''); }
-function closeSearch(){ $('#search-panel')?.classList.remove('open'); document.body.style.overflow=''; }
+function lockMobileLayer(){ document.body.classList.add('mobile-layer-open'); document.body.style.overflow='hidden'; }
+function unlockMobileLayer(){
+  const layerOpen = $('#cart-overlay')?.classList.contains('open') || $('#search-panel')?.classList.contains('open') || $('#mobile-menu')?.classList.contains('open') || $('.filters')?.classList.contains('mobile-open') || $('#size-modal')?.classList.contains('open');
+  if(!layerOpen){ document.body.classList.remove('mobile-layer-open'); document.body.style.overflow=''; }
+}
+function openCart(){ $('#cart-overlay')?.classList.add('open'); lockMobileLayer(); }
+function closeCart(){ $('#cart-overlay')?.classList.remove('open'); unlockMobileLayer(); }
+function openSearch(){ $('#search-panel')?.classList.add('open'); lockMobileLayer(); setTimeout(()=>$('#search-input')?.focus(),80); renderSearch(''); }
+function closeSearch(){ $('#search-panel')?.classList.remove('open'); unlockMobileLayer(); }
+
+function prepareMobileMenu(){
+  const menu=$('#mobile-menu'); const open=$('#mobile-menu-open'); if(!menu||!open) return;
+  open.setAttribute('aria-controls','mobile-menu'); open.setAttribute('aria-expanded','false');
+  menu.setAttribute('role','dialog'); menu.setAttribute('aria-modal','true'); menu.setAttribute('aria-label','Menu principal'); menu.setAttribute('aria-hidden','true');
+  menu.innerHTML=`<div class="mobile-drawer-head"><a class="logo" href="index.html"><span class="logo-mark">G</span><span class="logo-word">GABS SCRUBS</span></a><button class="drawer-close" id="mobile-menu-close" type="button" aria-label="Fechar menu">×</button></div><nav class="mobile-menu-primary" aria-label="Categorias"><a href="feminino.html">Novidades</a><a href="feminino.html">Feminino</a><a href="masculino.html">Masculino</a><a href="index.html#conjuntos">Conjuntos</a><a href="index.html#cores">Cores</a><a href="index.html#mais-usados">Mais vendidos</a></nav><div class="mobile-menu-meta"><button class="mobile-menu-search" type="button">Buscar produtos <span>→</span></button><a href="index.html#manifesto">Sobre a Gabs <span>→</span></a></div>`;
+}
+function openMobileMenu(){
+  const menu=$('#mobile-menu'); const trigger=$('#mobile-menu-open'); if(!menu) return;
+  menu.classList.add('open'); menu.setAttribute('aria-hidden','false'); trigger?.setAttribute('aria-expanded','true'); lockMobileLayer();
+  setTimeout(()=>$('#mobile-menu-close')?.focus(),40);
+}
+function closeMobileMenu(){
+  const menu=$('#mobile-menu'); const trigger=$('#mobile-menu-open'); if(!menu) return;
+  menu.classList.remove('open'); menu.setAttribute('aria-hidden','true'); trigger?.setAttribute('aria-expanded','false'); unlockMobileLayer();
+}
+
+function prepareFilterDrawer(){
+  const filters=$('.filters'); const trigger=$('.filter-open'); if(!filters||!trigger) return;
+  trigger.setAttribute('aria-controls','mobile-filters'); trigger.setAttribute('aria-expanded','false'); filters.id='mobile-filters'; filters.setAttribute('aria-hidden','true');
+  if(!$('.filter-drawer-head',filters)) filters.insertAdjacentHTML('afterbegin','<div class="filter-drawer-head"><strong>Filtros</strong><button type="button" class="filter-close" aria-label="Fechar filtros">×</button></div>');
+  if(!$('#filter-scrim')) document.body.insertAdjacentHTML('beforeend','<div class="filter-scrim" id="filter-scrim" aria-hidden="true"></div>');
+}
+function openFilters(){
+  if(!matchMedia('(max-width:820px)').matches) return;
+  const filters=$('.filters'); const trigger=$('.filter-open'); const scrim=$('#filter-scrim'); if(!filters) return;
+  filters.classList.add('mobile-open'); filters.setAttribute('aria-hidden','false'); trigger?.setAttribute('aria-expanded','true'); scrim?.classList.add('open'); lockMobileLayer();
+  setTimeout(()=>$('.filter-close',filters)?.focus(),40);
+}
+function closeFilters(){
+  const filters=$('.filters'); const trigger=$('.filter-open'); const scrim=$('#filter-scrim'); if(!filters) return;
+  filters.classList.remove('mobile-open'); filters.setAttribute('aria-hidden','true'); trigger?.setAttribute('aria-expanded','false'); scrim?.classList.remove('open'); unlockMobileLayer();
+}
 
 function renderSearch(q=''){
   const el=$('#search-results'); if(!el) return;
@@ -143,7 +182,7 @@ function renderPDP(){
   $$('[data-pdp-color]',root).forEach(b=>b.addEventListener('click',()=>{$$('[data-pdp-color]',root).forEach(x=>x.classList.remove('active')); b.classList.add('active'); color=b.dataset.pdpColor; $('#selected-color-label').textContent=`Cor: ${color}`;}));
   $('#pdp-add')?.addEventListener('click',()=>addToCart(p.slug,size,color));
   $('#mobile-pdp-add')?.addEventListener('click',()=>addToCart(p.slug,size,color));
-  $('#size-guide-open')?.addEventListener('click',()=>$('#size-modal')?.classList.add('open'));
+  $('#size-guide-open')?.addEventListener('click',()=>{$('#size-modal')?.classList.add('open');lockMobileLayer();});
   $('#cep')?.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);e.target.value=v;});
   $('#cep-btn')?.addEventListener('click',async()=>{
     const cep=$('#cep').value.replace(/\D/g,''); const note=$('#shipping-note');
@@ -171,10 +210,15 @@ function bindGlobal(){
   $$('.cart-open').forEach(b=>b.addEventListener('click',openCart));
   $('#cart-close')?.addEventListener('click',closeCart); $('#cart-overlay')?.addEventListener('click',e=>{if(e.target.id==='cart-overlay') closeCart();});
   $$('.search-open').forEach(b=>b.addEventListener('click',openSearch)); $('#search-close')?.addEventListener('click',closeSearch); $('#search-input')?.addEventListener('input',e=>renderSearch(e.target.value));
-  $('#mobile-menu-open')?.addEventListener('click',()=>$('#mobile-menu')?.classList.add('open')); $('#mobile-menu-close')?.addEventListener('click',()=>$('#mobile-menu')?.classList.remove('open'));
+  prepareMobileMenu(); prepareFilterDrawer();
+  $('#mobile-menu-open')?.addEventListener('click',openMobileMenu); $('#mobile-menu-close')?.addEventListener('click',closeMobileMenu);
+  $('#mobile-menu')?.addEventListener('click',e=>{if(e.target.closest('a')) closeMobileMenu(); if(e.target.closest('.mobile-menu-search')){closeMobileMenu(); setTimeout(openSearch,40);}});
+  $('.filter-open')?.addEventListener('click',openFilters); $('.filter-close')?.addEventListener('click',closeFilters); $('#filter-scrim')?.addEventListener('click',closeFilters);
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape') return; closeMobileMenu(); closeFilters(); closeSearch(); closeCart(); $('#size-modal')?.classList.remove('open'); unlockMobileLayer();});
+  window.addEventListener('resize',()=>{if(innerWidth>820){closeMobileMenu();closeFilters();}});
   $('#newsletter-form')?.addEventListener('submit',e=>{e.preventDefault(); const email=$('#newsletter-email').value.trim(); if(!email) return; localStorage.setItem('gabs_newsletter_preview',email); $('#newsletter-note').textContent='E-mail salvo nesta prévia. A integração de CRM será conectada na publicação.'; e.target.reset();});
-  $('#size-modal-close')?.addEventListener('click',()=>$('#size-modal')?.classList.remove('open'));
-  $('#size-modal')?.addEventListener('click',e=>{if(e.target.id==='size-modal') e.currentTarget.classList.remove('open');});
+  $('#size-modal-close')?.addEventListener('click',()=>{$('#size-modal')?.classList.remove('open');unlockMobileLayer();});
+  $('#size-modal')?.addEventListener('click',e=>{if(e.target.id==='size-modal'){e.currentTarget.classList.remove('open');unlockMobileLayer();}});
   $('#checkout-btn')?.addEventListener('click',()=>location.href='checkout.html');
   $$('input[name="category"], input[name="fit"]').forEach(i=>i.addEventListener('change',renderCollection)); $('#sort')?.addEventListener('change',renderCollection);
   $$('.filter-colors .swatch').forEach(b=>b.addEventListener('click',()=>{const active=b.classList.contains('active'); $$('.filter-colors .swatch').forEach(x=>x.classList.remove('active')); if(!active)b.classList.add('active'); renderCollection();}));
