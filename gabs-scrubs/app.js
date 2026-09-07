@@ -64,7 +64,7 @@ function toggleFavorite(slug){
 }
 
 function addToCart(slug,size,color){
-  if(!size){ alert('Selecione um tamanho.'); return false; }
+  if(!size){ alert('Escolha um tamanho antes de adicionar à sacola.'); return false; }
   const p=window.GABS_PRODUCTS.find(x=>x.slug===slug); if(!p) return false;
   const key=`${slug}-${size}-${color}`;
   const item=state.cart.find(i=>i.key===key);
@@ -74,7 +74,7 @@ function addToCart(slug,size,color){
 
 function renderCart(){
   const items=$('#cart-items'); const foot=$('#cart-foot'); if(!items) return;
-  if(!state.cart.length){ items.innerHTML='<div class="empty-cart"><div><p class="serif" style="font-size:34px;margin:0 0 8px">Sua sacola está vazia.</p><p>Descubra os scrubs e volte quando encontrar o seu.</p></div></div>'; if(foot) foot.style.display='none'; return; }
+  if(!state.cart.length){ items.innerHTML='<div class="empty-cart"><div><p class="serif" style="font-size:34px;margin:0 0 8px">Sua sacola está vazia.</p><p>Quando encontrar um scrub que goste, ele aparece aqui.</p></div></div>'; if(foot) foot.style.display='none'; return; }
   if(foot) foot.style.display='block';
   items.innerHTML=state.cart.map(i=>{ const p=window.GABS_PRODUCTS.find(x=>x.slug===i.slug); return `<div class="cart-item">
     <div class="cart-thumb"><img src="${p.image}" alt="${p.name}"></div>
@@ -85,7 +85,7 @@ function renderCart(){
   const total=state.cart.reduce((sum,i)=>{const p=window.GABS_PRODUCTS.find(x=>x.slug===i.slug); return sum+p.price*i.qty;},0);
   const subtotal=$('#cart-subtotal'); if(subtotal) subtotal.textContent=money(total);
   const prog=Math.min(100,(total/399)*100); const bar=$('#freight-progress'); if(bar) bar.style.width=`${prog}%`;
-  const copy=$('#freight-copy'); if(copy) copy.textContent= total>=399 ? 'Faixa de frete grátis atingida na configuração de staging.' : `Faltam ${money(399-total)} para a faixa configurada de frete grátis.`;
+  const copy=$('#freight-copy'); if(copy) copy.textContent= total>=399 ? 'Seu pedido entrou na faixa de frete grátis desta prévia.' : `Faltam ${money(399-total)} para o frete grátis.`;
 }
 
 function lockMobileLayer(){ document.body.classList.add('mobile-layer-open'); document.body.style.overflow='hidden'; }
@@ -137,7 +137,7 @@ function renderSearch(q=''){
   let ps=window.GABS_PRODUCTS;
   if(query) ps=ps.filter(p=>[p.name,p.fit,p.gender,p.category,...p.colors.map(c=>c[0])].join(' ').toLowerCase().includes(query));
   ps=ps.slice(0,6);
-  el.innerHTML=ps.length?ps.map(p=>`<a class="search-result" href="produto.html?slug=${p.slug}"><img src="${p.image}" alt=""><div><strong>${p.name}</strong><span>${p.fit}</span></div><span>${money(p.price)}</span></a>`).join(''):'<p style="color:var(--muted)">Nenhum produto encontrado.</p>';
+  el.innerHTML=ps.length?ps.map(p=>`<a class="search-result" href="produto.html?slug=${p.slug}"><img src="${p.image}" alt=""><div><strong>${p.name}</strong><span>${p.fit}</span></div><span>${money(p.price)}</span></a>`).join(''):'<p style="color:var(--muted)">Não achei nenhum produto com esse termo.</p>';
 }
 
 function renderCollection(){
@@ -168,13 +168,13 @@ function renderPDP(){
   <div class="pdp"><div class="gallery">${gallery.map((img,i)=>`<figure><img src="${img}" alt="${p.name}${i?` — detalhe ${i+1}`:''}"></figure>`).join('')}</div>
   <aside class="purchase-panel" data-pdp="${p.slug}">
     <h1 class="pdp-title">${p.name}</h1><div class="pdp-fit">${p.fit}</div>
-    <div class="rating"><span>☆☆☆☆☆</span><span>Sem avaliações verificadas ainda</span></div>
+    <div class="rating"><span>☆☆☆☆☆</span><span>Ainda sem avaliações de clientes</span></div>
     <div class="pdp-price">${money(p.price)}</div><div class="pdp-installments">ou 6x de ${money(p.price/6)}</div>
     <div class="option-block"><div class="option-head"><strong id="selected-color-label">Cor: ${p.colors[0][0]}</strong></div><div class="pdp-swatches">${p.colors.map((c,i)=>`<button style="--swatch:${c[1]}" data-pdp-color="${c[0]}" class="${i===0?'active':''}" title="${c[0]}"></button>`).join('')}</div></div>
-    <div class="option-block"><div class="option-head"><strong>Tamanho</strong><button type="button" id="size-guide-open">Qual é o meu tamanho?</button></div><div class="sizes">${p.sizes.map(s=>`<button class="size-btn" data-size="${s}">${s}</button>`).join('')}</div></div>
+    <div class="option-block"><div class="option-head"><strong>Tamanho</strong><button type="button" id="size-guide-open">Ver guia de medidas</button></div><div class="sizes">${p.sizes.map(s=>`<button class="size-btn" data-size="${s}">${s}</button>`).join('')}</div></div>
     <div style="margin-top:22px"><button class="btn full" id="pdp-add">Adicionar à sacola</button></div>
     <div class="option-block"><div class="option-head"><strong>Calcular entrega</strong></div><div class="shipping-box"><input id="cep" inputmode="numeric" maxlength="9" placeholder="00000-000" aria-label="CEP"><button id="cep-btn" type="button">Calcular</button></div><div class="shipping-note" id="shipping-note"></div></div>
-    <div class="accordion"><details open><summary>Descrição <span>+</span></summary><p>${p.description}</p></details><details><summary>Tecido <span>+</span></summary><p>${p.fabric}</p></details><details><summary>Detalhes e modelagem <span>+</span></summary><p>${p.details}</p></details><details><summary>Cuidados <span>+</span></summary><p>Lavar do avesso em ciclo delicado, com cores semelhantes. Evitar alvejantes. Secagem natural recomendada.</p></details><details><summary>Entrega e devoluções <span>+</span></summary><p>Regras finais de frete, prazo e devolução serão conectadas ao backend de produção.</p></details></div>
+    <div class="accordion"><details open><summary>Descrição <span>+</span></summary><p>${p.description}</p></details><details><summary>Tecido <span>+</span></summary><p>${p.fabric}</p></details><details><summary>Detalhes e modelagem <span>+</span></summary><p>${p.details}</p></details><details><summary>Cuidados <span>+</span></summary><p>Lave do avesso, com cores parecidas, em ciclo delicado. Evite alvejante e prefira secagem natural.</p></details><details><summary>Entrega e devoluções <span>+</span></summary><p>Frete, prazo e regras de devolução serão definidos na configuração final da loja.</p></details></div>
   </aside></div></div>`;
 
   let size=''; let color=p.colors[0][0];
@@ -186,10 +186,10 @@ function renderPDP(){
   $('#cep')?.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8); if(v.length>5)v=v.slice(0,5)+'-'+v.slice(5);e.target.value=v;});
   $('#cep-btn')?.addEventListener('click',async()=>{
     const cep=$('#cep').value.replace(/\D/g,''); const note=$('#shipping-note');
-    if(cep.length!==8){note.textContent='Digite um CEP válido com 8 números.'; return;}
-    note.textContent='Validando CEP…';
-    try{ const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`); const data=await r.json(); if(data.erro) throw new Error(); note.textContent=`${data.localidade}/${data.uf}. Tarifas de frete serão exibidas quando a integração de produção estiver ativa.`; }
-    catch{ note.textContent='Não foi possível validar o CEP agora.'; }
+    if(cep.length!==8){note.textContent='Digite um CEP com 8 números.'; return;}
+    note.textContent='Conferindo o CEP…';
+    try{ const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`); const data=await r.json(); if(data.erro) throw new Error(); note.textContent=`${data.localidade}/${data.uf}. O valor do frete aparece aqui quando a transportadora estiver conectada.`; }
+    catch{ note.textContent='Não consegui consultar esse CEP agora. Tente novamente em instantes.'; }
   });
 }
 
@@ -199,6 +199,152 @@ function renderCheckout(){
   let total=0;
   list.innerHTML=state.cart.map(i=>{const p=window.GABS_PRODUCTS.find(x=>x.slug===i.slug); total+=p.price*i.qty; return `<div class="cart-item"><div class="cart-thumb"><img src="${p.image}" alt=""></div><div class="cart-meta"><strong>${p.name}</strong><span>${i.color} • ${i.size} • Qtd. ${i.qty}</span></div><div>${money(p.price*i.qty)}</div></div>`}).join('');
   $('#checkout-total').textContent=money(total);
+}
+
+function applyHumanCopy(){
+  const products={
+    'gabs-one-feminino':{
+      description:'Um conjunto mais ajustado ao corpo, sem ficar preso. Funciona bem para quem passa o dia entre atendimento, corredor e consultório.',
+      fabric:'Tecido leve, com elasticidade em várias direções, toque macio e secagem rápida.',
+      details:'Top de linhas limpas com bolsos funcionais. Calça com cintura confortável e bolsos de acesso fácil.'
+    },
+    'gabs-move-feminino':{
+      description:'Tem mais espaço no corpo e continua com bom caimento. É a opção para quem gosta de roupa solta, mas não quer aparência larga demais.',
+      fabric:'Tecido respirável, com elasticidade em quatro direções e fácil de cuidar no dia a dia.',
+      details:'Top levemente solto e calça reta com cós flexível.'
+    },
+    'gabs-core-masculino':{
+      description:'Corte reto, confortável e fácil de usar por muitas horas. A proposta é vestir bem sem precisar ficar ajeitando a roupa durante o dia.',
+      fabric:'Tecido de toque seco, respirável e pensado para uso frequente.',
+      details:'Top reto com bolsos discretos. Calça straight com cós ajustável e bolsos funcionais.'
+    },
+    'gabs-studio-feminino':{
+      description:'Uma versão mais alinhada do scrub clássico, com linhas alongadas e um caimento que funciona bem dentro e fora do consultório.',
+      fabric:'Poliamida de toque suave, com elasticidade e boa recuperação de forma.',
+      details:'Recortes discretos e bolsos integrados ao desenho da peça.'
+    },
+    'gabs-essential-jaleco':{
+      description:'Jaleco com corte de alfaiataria leve, feito para ficar alinhado sem aquela sensação de peça dura ou pesada.',
+      fabric:'Tecido encorpado na medida, macio e fácil de cuidar.',
+      details:'Gola limpa, bolsos amplos e comprimento pensado para diferentes rotinas de atendimento.'
+    },
+    'gabs-shift-feminino':{
+      description:'Modelagem mais próxima do corpo, com espaço para se movimentar sem repuxar ao sentar, andar ou levantar os braços.',
+      fabric:'Tecido stretch respirável, de toque frio e secagem rápida.',
+      details:'Top slim com recorte lateral e calça de cintura média.'
+    },
+    'gabs-core-masculino-forest':{
+      description:'Uma versão mais solta do Core, com volume controlado e visual casual. Boa para quem não gosta de scrub muito ajustado.',
+      fabric:'Tecido flexível, resistente e simples de manter na rotina.',
+      details:'Top relaxed e calça reta com bolsos funcionais.'
+    },
+    'gabs-one-sky':{
+      description:'O corte slim da linha One em um azul claro que sai do preto e marinho sem chamar atenção demais.',
+      fabric:'Tecido leve, respirável e elástico em várias direções.',
+      details:'Modelagem slim com bolsos bem posicionados e acabamento limpo.'
+    }
+  };
+  window.GABS_PRODUCTS?.forEach(p=>Object.assign(p,products[p.slug]||{}));
+
+  const announcement=$('.announcement');
+  if(announcement) announcement.textContent=location.pathname.endsWith('checkout.html') ? 'PRÉVIA DA LOJA • pagamentos ainda não estão habilitados' : 'PRÉVIA DA LOJA • catálogo, estoque e pagamentos ainda serão conectados';
+
+  const path=location.pathname;
+  const home=path.endsWith('index.html') || /gabs-scrubs\/?$/.test(path);
+  if(home){
+    const hero=$('.hero-marquee-copy');
+    if(hero){
+      $('.eyebrow',hero).textContent='Gabs Scrubs';
+      $('h1',hero).textContent='Scrubs que vestem bem o plantão inteiro.';
+      $('p',hero).textContent='Modelagens confortáveis, bolsos onde fazem sentido e cores que saem do básico. Para consultório, clínica, hospital e tudo que cabe no seu dia.';
+    }
+    const sections=$$('main .section');
+    const category=$('#conjuntos');
+    if(category){
+      $('.eyebrow',category).textContent='Escolha por categoria';
+      $('.section-title',category).textContent='Comece pelo que você usa mais.';
+      $('.section-kicker',category).textContent='Tem quem prefira um corte mais ajustado. Tem quem queira mais espaço para se mover. E tem dia em que a cor decide tudo.';
+    }
+    const best=$('#mais-usados');
+    if(best){
+      $('.eyebrow',best).textContent='Seleção Gabs';
+      $('.section-title',best).textContent='Alguns bons lugares para começar.';
+    }
+    const colors=$('#cores');
+    if(colors){
+      $('.eyebrow',colors).textContent='Escolha pela cor';
+      $('.section-title',colors).textContent='Qual cor vai pro plantão hoje?';
+      $('.section-kicker',colors).textContent='Preto e marinho resolvem quase tudo. Verde, vinho e tons claros mudam completamente o visual. Escolha uma família e veja os modelos.';
+    }
+    const editorial=$('.editorial-copy');
+    if(editorial){
+      $('.eyebrow',editorial).textContent='Gabs Scrubs';
+      $('h2',editorial).textContent='Roupa de trabalho também precisa vestir bem.';
+      $('p',editorial).textContent='Se aperta ao sentar, falta bolso ou o tecido incomoda depois de horas, não adianta ser bonito. A Gabs parte da rotina de atendimento para pensar caimento, mobilidade e acabamento.';
+    }
+    const look=$('.look-copy');
+    if(look){
+      $('.eyebrow',look).textContent='Look completo';
+      $('h2',look).innerHTML='Um conjunto pronto<br>para o dia todo.';
+      $('.btn',look).textContent='Ver o conjunto';
+    }
+    const tech=$('.tech-copy');
+    if(tech){
+      $('.eyebrow',tech).textContent='No uso de verdade';
+      $('h2',tech).textContent='Conforto aparece nos detalhes.';
+      const texts=[
+        ['Mobilidade','Espaço para agachar, sentar, caminhar e levantar os braços sem ficar ajeitando a roupa.'],
+        ['Respirabilidade','Tecido leve para horas de uso, inclusive nos dias mais quentes.'],
+        ['Modelagem','Caimento definido sem travar o movimento.'],
+        ['Bolsos','Espaço para o que precisa ficar à mão durante o atendimento.'],
+        ['Cuidado simples','Peças pensadas para uma rotina de lavagem frequente sem complicação.']
+      ];
+      $$('.tech-item',tech).forEach((item,i)=>{if(texts[i]){$('strong',item).textContent=texts[i][0];$('span',item).textContent=texts[i][1];}});
+    }
+    const professionTitle=$('.professions')?.closest('.section')?.querySelector('.section-title');
+    if(professionTitle) professionTitle.textContent='Cada rotina pede uma coisa diferente do scrub.';
+    const review=$('.review-strip');
+    if(review){
+      $('.review-side h2',review).innerHTML='Avaliações de<br>quem comprou.';
+      $('.empty-proof h3',review).textContent='As avaliações aparecem aqui quando os primeiros pedidos reais forem concluídos.';
+      $('.empty-proof p',review).textContent='Não colocamos depoimento de teste no ar. Quando houver compra verificada, a nota e o comentário entram nesta área.';
+    }
+    const manifesto=$('#manifesto p'); if(manifesto) manifesto.textContent='Scrub é roupa de trabalho. Ainda assim, continua sendo roupa.';
+    const insta=$('.instagram-grid')?.closest('.section');
+    if(insta){const title=$('.section-title',insta);if(title)title.textContent='A Gabs fora do site.';}
+    const newsletter=$('.newsletter');
+    if(newsletter){
+      $('.eyebrow',newsletter).textContent='Lista Gabs';
+      $('h2',newsletter).textContent='Quer saber das próximas cores?';
+      $('p',newsletter).textContent='Deixe seu e-mail para receber lançamentos e reposições quando a lista estiver ativa.';
+      $('.newsletter-form button',newsletter).textContent='Quero receber novidades →';
+    }
+  }
+
+  if(document.body.dataset.gender==='feminino'){
+    const hero=$('.page-hero');
+    if(hero){$('.eyebrow',hero).textContent='Coleção feminina';$('h1',hero).textContent='Scrubs femininos';$('p',hero).textContent='Do slim ao relaxed, com cores que funcionam no consultório e fora dele. Filtre por modelagem, categoria ou cor e vá direto ao que procura.';}
+  }
+  if(document.body.dataset.gender==='masculino'){
+    const hero=$('.page-hero');
+    if(hero){$('.eyebrow',hero).textContent='Coleção masculina';$('h1',hero).textContent='Scrubs masculinos';$('p',hero).textContent='Modelagens retas ou mais soltas, bolsos funcionais e peças feitas para horas de uso. Filtre por cor, corte ou categoria.';}
+  }
+
+  if(path.endsWith('produto.html')){
+    const modal=$('#size-modal .modal-box');
+    if(modal){
+      const notes=$$('p',modal);
+      if(notes[0]) notes[0].textContent='As medidas abaixo ainda são de referência e serão trocadas pela tabela oficial da Gabs antes da abertura da loja.';
+      if(notes[1]) notes[1].textContent='Referência visual desta prévia: modelo com 1,72 m veste P.';
+    }
+  }
+
+  if(path.endsWith('checkout.html')){
+    const note=$('.staging-note');
+    if(note) note.innerHTML='<strong>Pagamento ainda não está ativo.</strong><br>Esta página serve para revisar a experiência de compra. Nenhuma cobrança, pedido ou PIX é criado nesta prévia.';
+    const payButton=$('.checkout-form .btn.full'); if(payButton) payButton.textContent='Pagamento indisponível nesta prévia';
+    const summary=$('.checkout-summary h2'); if(summary) summary.textContent='O que está na sacola';
+  }
 }
 
 function bindGlobal(){
@@ -216,7 +362,7 @@ function bindGlobal(){
   $('.filter-open')?.addEventListener('click',openFilters); $('.filter-close')?.addEventListener('click',closeFilters); $('#filter-scrim')?.addEventListener('click',closeFilters);
   document.addEventListener('keydown',e=>{if(e.key!=='Escape') return; closeMobileMenu(); closeFilters(); closeSearch(); closeCart(); $('#size-modal')?.classList.remove('open'); unlockMobileLayer();});
   window.addEventListener('resize',()=>{if(innerWidth>820){closeMobileMenu();closeFilters();}});
-  $('#newsletter-form')?.addEventListener('submit',e=>{e.preventDefault(); const email=$('#newsletter-email').value.trim(); if(!email) return; localStorage.setItem('gabs_newsletter_preview',email); $('#newsletter-note').textContent='E-mail salvo nesta prévia. A integração de CRM será conectada na publicação.'; e.target.reset();});
+  $('#newsletter-form')?.addEventListener('submit',e=>{e.preventDefault(); const email=$('#newsletter-email').value.trim(); if(!email) return; localStorage.setItem('gabs_newsletter_preview',email); $('#newsletter-note').textContent='E-mail salvo nesta prévia. Na loja final, ele entra na lista da Gabs.'; e.target.reset();});
   $('#size-modal-close')?.addEventListener('click',()=>{$('#size-modal')?.classList.remove('open');unlockMobileLayer();});
   $('#size-modal')?.addEventListener('click',e=>{if(e.target.id==='size-modal'){e.currentTarget.classList.remove('open');unlockMobileLayer();}});
   $('#checkout-btn')?.addEventListener('click',()=>location.href='checkout.html');
@@ -230,5 +376,5 @@ function applyCollectionQuery(){
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
-  renderBestSellers(); applyCollectionQuery(); renderCollection(); renderPDP(); renderCart(); renderCheckout(); updateBadges(); bindGlobal();
+  applyHumanCopy(); renderBestSellers(); applyCollectionQuery(); renderCollection(); renderPDP(); renderCart(); renderCheckout(); updateBadges(); bindGlobal();
 });
