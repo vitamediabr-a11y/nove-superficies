@@ -1,0 +1,21 @@
+name: Import Gabs HQ assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/import-gabs-hq.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-hq:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Import verified HQ photography
+        run: bash .github/scripts/import-gabs-hq.sh
