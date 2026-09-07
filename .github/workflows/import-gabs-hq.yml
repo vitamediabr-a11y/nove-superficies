@@ -20,5 +20,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Use public Drive direct-download endpoint
+        run: |
+          sed -i 's#https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t#https://drive.google.com/uc?export=download\&id=${id}#' .github/scripts/import-gabs-hq.sh
+
       - name: Import and verify HQ photography
         run: bash .github/scripts/import-gabs-hq.sh
