@@ -20,9 +20,34 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use public Drive direct-download endpoint
+      - name: Download public Drive originals
         run: |
-          sed -i 's#https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t#https://drive.google.com/uc?export=download\&id=${id}#' .github/scripts/import-gabs-hq.sh
+          python -m pip install --quiet gdown
+          mkdir -p gabs-scrubs/assets/gabs-hq
+          python - <<'PY'
+          import gdown
+          files = {
+              '1FeYuqDC9s-JIlSm4RsABg3F7BnnYXc1G': 'gabs-scrubs/assets/gabs-hq/hero-beige-mirror-v2.png',
+              '1jCmzWb8AkhV3KZrOcF-m2H5V25LnWyiy': 'gabs-scrubs/assets/gabs-hq/hero-beige-portrait-v2.png',
+              '1M1SwO1OxObHcNvDCXSFGunfD16Kq8I90': 'gabs-scrubs/assets/gabs-hq/hero-red-v2.png',
+              '1i-cKPYmJWbF45rWpiqMZaYZu-598FJM1': 'gabs-scrubs/assets/gabs-hq/hero-blue-client-v2.png',
+              '1_1-LSa0QjKwR_eX3kqFEC2kaah9z5OoY': 'gabs-scrubs/assets/gabs-hq/hero-team-navy-v2.png',
+              '18YINwRaS163YYqmMCaRvxTSYYXtOa_dJ': 'gabs-scrubs/assets/gabs-hq/detail-sleeve-v2.png',
+          }
+          for file_id, output in files.items():
+              result = gdown.download(id=file_id, output=output, quiet=False)
+              if not result:
+                  raise SystemExit(f'Could not download {file_id}')
+          PY
 
-      - name: Import and verify HQ photography
-        run: bash .github/scripts/import-gabs-hq.sh
+      - name: Keep verified downloads and run importer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('.github/scripts/import-gabs-hq.sh')
+          s=p.read_text()
+          s=re.sub(r'download\(\) \{.*?\n\}', 'download() { :; }', s, count=1, flags=re.S)
+          p.write_text(s)
+          PY
+          bash .github/scripts/import-gabs-hq.sh
