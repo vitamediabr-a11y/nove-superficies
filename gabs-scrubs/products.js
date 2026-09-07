@@ -253,3 +253,64 @@ window.GABS_PRODUCTS = GABS_PRODUCTS;
 
   scheduleAutoplay(autoplayDelay);
 })();
+
+(function initWhatsAppCartCheckout(){
+  const whatsappBase='https://wa.me/message/4ITMQF2GQOCH01';
+  const formatMoney=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
+
+  function readCart(){
+    try{return JSON.parse(localStorage.getItem('gabs_cart')||'[]');}
+    catch{return [];}
+  }
+
+  function buildMessage(){
+    const cart=readCart();
+    if(!cart.length) return '';
+
+    let total=0;
+    const lines=['Olá! Quero finalizar meu pedido na Gabs Scrubs.',''];
+
+    cart.forEach((item,index)=>{
+      const product=window.GABS_PRODUCTS?.find(p=>p.slug===item.slug);
+      if(!product) return;
+      const itemTotal=product.price*item.qty;
+      total+=itemTotal;
+      lines.push(`${index+1}. ${product.name}`);
+      lines.push(`Cor: ${item.color} • Tamanho: ${item.size} • Qtd: ${item.qty}`);
+      lines.push(`Valor: ${formatMoney(itemTotal)}`);
+      lines.push('');
+    });
+
+    lines.push(`Total do pedido: ${formatMoney(total)}`);
+    lines.push('');
+    lines.push('Pode confirmar a disponibilidade e me enviar a chave PIX ou o link de pagamento, por favor?');
+    return lines.join('\n');
+  }
+
+  function simplifyCartFooter(){
+    document.querySelectorAll('#freight-progress').forEach(el=>el.closest('.progress')?.remove());
+    document.querySelectorAll('#freight-copy').forEach(el=>el.remove());
+    document.querySelectorAll('#checkout-btn').forEach(button=>{
+      button.textContent='Finalizar pelo WhatsApp';
+      button.removeAttribute('disabled');
+      button.setAttribute('aria-label','Enviar pedido da sacola pelo WhatsApp');
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',simplifyCartFooter);
+
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('#checkout-btn');
+    if(!button) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const message=buildMessage();
+    if(!message){
+      alert('Sua sacola está vazia.');
+      return;
+    }
+
+    window.location.href=`${whatsappBase}?text=${encodeURIComponent(message)}`;
+  },true);
+})();
