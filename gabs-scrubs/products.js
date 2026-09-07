@@ -74,3 +74,95 @@ const GABS_PRODUCTS = [
 ];
 
 window.GABS_PRODUCTS = GABS_PRODUCTS;
+
+(function initHeroSlider(){
+  if(!document.querySelector('link[data-hero-slider]')){
+    const css=document.createElement('link');
+    css.rel='stylesheet';
+    css.href='hero-slider.css';
+    css.dataset.heroSlider='true';
+    document.head.appendChild(css);
+  }
+
+  const hero=document.querySelector('.hero-marquee');
+  const track=hero?.querySelector('.hero-marquee-track');
+  if(!hero||!track) return;
+
+  [...track.querySelectorAll('.hero-model')].slice(6).forEach(slide=>slide.remove());
+  const slides=[...track.querySelectorAll('.hero-model')];
+  if(slides.length<2) return;
+
+  track.removeAttribute('aria-hidden');
+  track.setAttribute('aria-label','Galeria da campanha Gabs Scrubs');
+
+  const pagination=document.createElement('div');
+  pagination.className='hero-pagination';
+  pagination.setAttribute('role','group');
+  pagination.setAttribute('aria-label','Selecionar foto da campanha');
+
+  const dots=slides.map((_,index)=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.className=`hero-dot${index===0?' active':''}`;
+    button.setAttribute('aria-label',`Ir para foto ${index+1} de ${slides.length}`);
+    button.setAttribute('aria-current',index===0?'true':'false');
+    button.addEventListener('click',()=>{
+      track.scrollTo({left:index*track.clientWidth,behavior:'smooth'});
+    });
+    pagination.appendChild(button);
+    return button;
+  });
+  hero.appendChild(pagination);
+
+  let activeIndex=0;
+  let raf=0;
+  const setActive=index=>{
+    const next=Math.max(0,Math.min(slides.length-1,index));
+    if(next===activeIndex&&dots[next]?.classList.contains('active')) return;
+    activeIndex=next;
+    dots.forEach((dot,i)=>{
+      const active=i===next;
+      dot.classList.toggle('active',active);
+      dot.setAttribute('aria-current',active?'true':'false');
+    });
+  };
+  const sync=()=>{
+    raf=0;
+    const width=track.clientWidth||1;
+    setActive(Math.round(track.scrollLeft/width));
+  };
+  track.addEventListener('scroll',()=>{
+    if(!raf) raf=requestAnimationFrame(sync);
+  },{passive:true});
+
+  let dragging=false;
+  let startX=0;
+  let startScroll=0;
+  track.addEventListener('pointerdown',event=>{
+    if(event.pointerType==='touch') return;
+    dragging=true;
+    startX=event.clientX;
+    startScroll=track.scrollLeft;
+    track.classList.add('is-dragging');
+    track.setPointerCapture?.(event.pointerId);
+  });
+  track.addEventListener('pointermove',event=>{
+    if(!dragging) return;
+    track.scrollLeft=startScroll-(event.clientX-startX);
+  });
+  const endDrag=event=>{
+    if(!dragging) return;
+    dragging=false;
+    track.classList.remove('is-dragging');
+    track.releasePointerCapture?.(event.pointerId);
+    const index=Math.round(track.scrollLeft/(track.clientWidth||1));
+    track.scrollTo({left:index*track.clientWidth,behavior:'smooth'});
+  };
+  track.addEventListener('pointerup',endDrag);
+  track.addEventListener('pointercancel',endDrag);
+  track.addEventListener('pointerleave',event=>{if(dragging) endDrag(event);});
+
+  window.addEventListener('resize',()=>{
+    track.scrollLeft=activeIndex*track.clientWidth;
+  },{passive:true});
+})();
