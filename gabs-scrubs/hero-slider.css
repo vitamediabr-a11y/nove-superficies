@@ -10,16 +10,16 @@
 .hero-model:nth-child(2){background-image:url('assets/gabs-hero-beige-portrait.webp')!important;background-position:center 18%!important}
 .hero-model:nth-child(3){background-image:url('assets/gabs-hero-red.webp')!important;background-position:center 16%!important}
 .hero-model:nth-child(4){background-image:url('assets/gabs-hero-blue-client.webp')!important;background-position:center 20%!important}
-.hero-model:nth-child(5){background-image:url('assets/gabs-hero-beige-mirror.webp')!important;background-position:center 30%!important}
-.hero-model:nth-child(6){background-image:url('assets/gabs-hero-red.webp')!important;background-position:center 26%!important}
+.hero-model:nth-child(5){background-image:url('assets/gabs-hero-team-navy.webp')!important;background-position:center 30%!important}
+.hero-model:nth-child(6){background-image:url('assets/gabs-detail-sleeve.webp')!important;background-position:center 42%!important}
 .hero-model::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(10,10,8,.52) 0%,rgba(10,10,8,.13) 38%,rgba(10,10,8,.01) 65%)}
 .hero-model::after{position:absolute;z-index:2;left:max(28px,calc((100% - 1440px)/2));bottom:128px;max-width:17ch;color:#fff;font-family:'Italiana',Georgia,serif;font-size:clamp(30px,3.5vw,50px);line-height:1.03;letter-spacing:-.01em;text-wrap:balance;text-shadow:0 1px 18px rgba(0,0,0,.2);pointer-events:none}
-.hero-model:nth-child(1)::after{content:'Feito para vestir bem. Até no fim do plantão.'}
-.hero-model:nth-child(2)::after{content:'Leve no corpo. Bonito sem esforço.'}
-.hero-model:nth-child(3)::after{content:'Vinho para sair do automático.'}
-.hero-model:nth-child(4)::after{content:'Conforto que acompanha a rotina.'}
-.hero-model:nth-child(5)::after{content:'Caimento que funciona de verdade.'}
-.hero-model:nth-child(6)::after{content:'Cor, corte e presença.'}
+.hero-model:nth-child(1)::after{content:'Um scrub que veste bem de verdade.'}
+.hero-model:nth-child(2)::after{content:'Leve no corpo. Limpo no visual.'}
+.hero-model:nth-child(3)::after{content:'Cor também faz parte do uniforme.'}
+.hero-model:nth-child(4)::after{content:'Feito para a rotina real.'}
+.hero-model:nth-child(5)::after{content:'Quando a equipe veste a mesma cor.'}
+.hero-model:nth-child(6)::after{content:'O acabamento aparece nos detalhes.'}
 .hero-marquee-copy{position:absolute!important;inset:0!important;z-index:5!important;display:flex!important;align-items:flex-end!important;color:#fff!important;pointer-events:none!important}
 .hero-marquee-copy .eyebrow,.hero-marquee-copy h1,.hero-marquee-copy p{display:none!important}
 .hero-marquee-copy .container{padding-bottom:58px!important}
@@ -32,14 +32,26 @@
 .hero-arrow{position:absolute;z-index:8;top:50%;width:44px;height:44px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.52);border-radius:50%;background:rgba(18,18,15,.18);color:#fff;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);transform:translateY(-50%);cursor:pointer;touch-action:manipulation}
 .hero-arrow svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .hero-arrow-prev{left:18px}.hero-arrow-next{right:18px}
-.categories .category-tile:first-child{background-image:url('assets/gabs-hero-beige-portrait.webp');background-size:cover;background-position:center 20%}
-.categories .category-tile:first-child>img{opacity:0}
-.categories .category-tile.wide{background-image:url('assets/gabs-hero-blue-client.webp');background-size:cover;background-position:center 24%}
-.categories .category-tile.wide>img{opacity:0}
-.editorial-media{background-image:url('assets/gabs-hero-blue-client.webp');background-size:cover;background-position:center 25%}
+
+/* Real Gabs photography across the homepage */
+.categories .category-tile{background-size:cover;background-position:center;background-repeat:no-repeat}
+.categories .category-tile>img{opacity:0}
+.categories .category-tile:nth-child(1){background-image:url('assets/gabs-hero-beige-portrait.webp');background-position:center 20%}
+.categories .category-tile:nth-child(2){background-image:url('assets/gabs-hero-team-navy.webp');background-position:center 35%}
+.categories .category-tile:nth-child(3){background-image:url('assets/gabs-hero-beige-mirror.webp');background-position:center 25%}
+.editorial-media{background-image:url('assets/gabs-hero-blue-client.webp');background-size:cover;background-position:center 25%;background-repeat:no-repeat}
 .editorial-media>img{opacity:0}
-.look{background-image:url('assets/gabs-hero-red.webp');background-size:cover;background-position:center 20%}
+.look{background-image:url('assets/gabs-hero-red.webp');background-size:cover;background-position:center 20%;background-repeat:no-repeat}
 .look>img{opacity:0}
+.tech-media{background-image:url('assets/gabs-detail-sleeve.webp');background-size:cover;background-position:center 42%;background-repeat:no-repeat}
+.tech-media>img{opacity:0}
+.instagram-grid a{background-size:cover;background-position:center;background-repeat:no-repeat}
+.instagram-grid a img{opacity:0}
+.instagram-grid a:nth-child(1){background-image:url('assets/gabs-hero-beige-mirror.webp')}
+.instagram-grid a:nth-child(2){background-image:url('assets/gabs-hero-red.webp')}
+.instagram-grid a:nth-child(3){background-image:url('assets/gabs-hero-blue-client.webp')}
+.instagram-grid a:nth-child(4){background-image:url('assets/gabs-hero-team-navy.webp')}
+
 @media (max-width:820px){.hero-marquee{min-height:78svh!important}.hero-model{height:78svh!important}.hero-model::after{left:18px;bottom:108px;max-width:15ch;font-size:26px;line-height:1.04}.hero-marquee-copy .container{width:100%!important;padding:0 18px 50px!important;max-width:none!important}.hero-marquee-copy .hero-actions{width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:7px!important}.hero-marquee-copy .hero-actions .btn{width:100%!important;min-width:0!important;min-height:41px!important;padding:0 6px!important;font-size:9px!important;letter-spacing:.055em!important}.hero-pagination{bottom:max(8px,env(safe-area-inset-bottom));gap:7px;padding:6px 8px}.hero-arrow{width:40px;height:40px;background:rgba(18,18,15,.16)}.hero-arrow-prev{left:8px}.hero-arrow-next{right:8px}}
 @media (max-width:520px){.hero-model::after{left:16px;bottom:102px;max-width:14ch;font-size:23px;line-height:1.04}.hero-marquee-copy .container{padding:0 16px 46px!important}.hero-marquee-copy .hero-actions .btn{min-height:40px!important;font-size:8.7px!important}.hero-arrow{top:47%;width:38px;height:38px}.hero-arrow svg{width:17px;height:17px}}
 @media (max-width:360px){.hero-model::after{left:14px;bottom:98px;max-width:13ch;font-size:21px}.hero-marquee-copy .container{padding-left:14px!important;padding-right:14px!important;padding-bottom:44px!important}.hero-marquee-copy .hero-actions .btn{min-height:39px!important;font-size:8.2px!important;padding-inline:4px!important}.hero-pagination{gap:6px}}
