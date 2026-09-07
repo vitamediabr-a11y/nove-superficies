@@ -1,7 +1,7 @@
 const GABS_PRODUCTS = [
   {
     slug:'gabs-one-feminino', name:'Gabs One — Feminino', fit:'Modelagem Slim', gender:'feminino', category:'scrubs', price:289,
-    colors:[['Verde Sálvia','#82907b'],['Preto','#171717'],['Vinho','#6d2634'],['Areia','#c3ad8c']], sizes:['PP','P','M','G','GG'],
+    colors:[['Verde Sálvia','#82907b'],['Preto','#171717'],['Vinho','#6d2634'],['Areia','#c3ad8b']], sizes:['PP','P','M','G','GG'],
     image:'https://images.unsplash.com/photo-1666887360684-8082fc98ebd2?auto=format&fit=crop&q=82&w=1200',
     image2:'https://images.unsplash.com/photo-1765896387398-1e1ae8d2eb85?auto=format&fit=crop&q=82&w=1200',
     description:'Conjunto de linhas limpas, caimento preciso e mobilidade para uma rotina que exige presença do começo ao fim.',
@@ -45,7 +45,7 @@ const GABS_PRODUCTS = [
     details:'Gola limpa, bolsos amplos e comprimento equilibrado para diferentes rotinas.'
   },
   {
-    slug:'gabs-shift-feminino', name:'Gabs Shift — Feminino', fit:'Modelagem Slim', gender:'femino', category:'conjuntos', price:329,
+    slug:'gabs-shift-feminino', name:'Gabs Shift — Feminino', fit:'Modelagem Slim', gender:'feminino', category:'conjuntos', price:329,
     colors:[['Forest','#314b3d'],['Wine','#6d2634'],['Navy','#233244'],['Black','#171717']], sizes:['PP','P','M','G','GG'],
     image:'https://images.unsplash.com/photo-1765896387398-1e1ae8d2eb85?auto=format&fit=crop&q=82&w=1200',
     image2:'https://images.unsplash.com/photo-1769072610024-5b8a50f05c73?auto=format&fit=crop&q=82&w=1200',
@@ -63,7 +63,7 @@ const GABS_PRODUCTS = [
     details:'Top relaxed e calça reta com bolsos funcionais.'
   },
   {
-    slug:'gabs-one-sky', name:'Gabs One Sky', fit:'Modelagem Slim', gender:'femino', category:'scrubs', price:289,
+    slug:'gabs-one-sky', name:'Gabs One Sky', fit:'Modelagem Slim', gender:'feminino', category:'scrubs', price:289,
     colors:[['Sky','#88a7b8'],['Sage','#889886'],['Rose','#b98f91']], sizes:['PP','P','M','G','GG'],
     image:'https://images.unsplash.com/photo-1666887360684-8082fc98ebd2?auto=format&fit=crop&q=82&w=1200',
     image2:'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&q=82&w=1200',
@@ -73,4 +73,4 @@ const GABS_PRODUCTS = [
   }
 ];
 
-window.GABS_PRODUCTS = GAPS_PRODUCTS;
+window.GABS_PRODUCTS = GABS_PRODUCTS;
