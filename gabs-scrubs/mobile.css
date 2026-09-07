@@ -22,6 +22,9 @@ body{letter-spacing:.002em}
 .eyebrow{font-weight:400!important;letter-spacing:.16em!important}
 .btn,.link-arrow,.newsletter-form button{font-weight:400!important;letter-spacing:.08em!important}
 
+/* Frete é confirmado no atendimento da Gabs pelo WhatsApp. */
+.purchase-panel .option-block:has(#cep){display:none!important}
+
 @media (max-width:820px){
   :root{--header-h:64px}
   html,body{max-width:100%;overflow-x:hidden}
