@@ -2,19 +2,48 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f2ec">
 <title>Gabs Scrubs — Scrubs com linguagem de moda</title><meta name="description" content="Gabs Scrubs. Scrubs premium com design contemporâneo, conforto e presença profissional."><meta name="robots" content="noindex,nofollow">
 <meta property="og:title" content="Gabs Scrubs"><meta property="og:description" content="Scrubs com linguagem de moda."><meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
+body{font-family:'Cormorant Garamond',Georgia,serif}
+.logo-word,.nav>a,.nav-dropdown>button,.btn,.eyebrow,.link-arrow,.section-kicker,.product-name,.price,.fit,.installments,.tile-copy span,.color-family span,.tech-item,.footer-col,.footer-bottom,.newsletter-form,.form-note,.drawer,.search-panel{font-family:'Cormorant Garamond',Georgia,serif}
+.logo-word{font-size:16px;letter-spacing:.16em;font-weight:600}
+.nav>a,.nav-dropdown>button{font-size:14px;font-weight:600}.btn{font-size:14px;letter-spacing:.055em}.eyebrow{font-size:13px}
+.hero-marquee{position:relative;min-height:calc(100svh - 108px);overflow:hidden;background:#d7d0c7}
+.hero-marquee-track{display:flex;width:max-content;min-height:inherit;animation:gabsHeroMarquee 34s linear infinite;will-change:transform}
+.hero-model{margin:0;width:min(30vw,430px);min-width:280px;height:calc(100svh - 108px);position:relative;overflow:hidden;flex:none;background:#d7d0c7}
+.hero-model img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:saturate(.9) contrast(.98)}
+.hero-marquee::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(0deg,rgba(0,0,0,.52) 0%,rgba(0,0,0,.14) 46%,rgba(0,0,0,.03) 72%),linear-gradient(90deg,rgba(0,0,0,.28),transparent 58%)}
+.hero-marquee-copy{position:absolute;inset:0;z-index:3;display:flex;align-items:flex-end;color:#fff;pointer-events:none}
+.hero-marquee-copy .container{padding-bottom:clamp(42px,7vw,86px)}
+.hero-marquee-copy .eyebrow,.hero-marquee-copy h1,.hero-marquee-copy p,.hero-marquee-copy .hero-actions{pointer-events:auto}
+.hero-marquee-copy h1{margin:0;max-width:760px;font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(68px,9vw,132px);font-weight:500;line-height:.8;letter-spacing:-.035em}
+.hero-marquee-copy p{max-width:570px;font-size:20px;line-height:1.45;margin:20px 0 28px;color:rgba(255,255,255,.92)}
+.hero-actions{display:flex;gap:10px;flex-wrap:nowrap}
+.hero-actions .btn{min-width:190px}
+@keyframes gabsHeroMarquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @media (max-width:820px){
   .header-inner{position:relative;display:flex;align-items:center}
   .logo{position:absolute;left:50%;transform:translateX(-50%);z-index:2;justify-self:auto}
   .header-actions{width:100%;justify-self:auto}
   .header-actions .wishlist{display:none}
   .header-actions .account{display:grid;margin-left:auto}
+  .hero-marquee{min-height:78svh}
+  .hero-model{width:68vw;min-width:235px;height:78svh}
+  .hero-marquee-copy .container{padding-bottom:34px}
+  .hero-marquee-copy h1{font-size:clamp(54px,16vw,78px);max-width:520px;line-height:.84}
+  .hero-marquee-copy p{font-size:17px;max-width:390px;margin:16px 0 22px}
 }
 @media (max-width:520px){
+  .logo-word{font-size:13px;letter-spacing:.12em}
+  .hero-model{width:72vw;min-width:220px}
+  .hero-marquee-copy h1{font-size:clamp(48px,15vw,66px)}
+  .hero-marquee-copy p{font-size:15px;max-width:340px}
   .hero-actions{width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;flex-wrap:nowrap}
-  .hero-actions .btn{width:100%;min-width:0;padding-inline:10px;white-space:nowrap}
+  .hero-actions .btn{width:100%;min-width:0;padding-inline:8px;white-space:nowrap;font-size:12px}
 }
+@media (max-width:360px){.hero-model{width:76vw;min-width:205px}.hero-marquee-copy h1{font-size:46px}.hero-marquee-copy p{font-size:14px}.hero-actions .btn{font-size:11px;letter-spacing:.03em}}
+@media (prefers-reduced-motion:reduce){.hero-marquee-track{animation:none}}
 </style>
 <script defer src="products.js"></script><script defer src="app.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Gabs Scrubs","sameAs":["https://www.instagram.com/gabscrubs"]}</script>
@@ -28,7 +57,23 @@
 <script>document.addEventListener('DOMContentLoaded',()=>{const acts=document.querySelectorAll('.header-actions .icon-btn'); acts.forEach(b=>{if(b.classList.contains('search-open'))b.innerHTML=icon('search'); else if(b.classList.contains('account'))b.innerHTML=icon('user'); else if(b.classList.contains('wishlist'))b.innerHTML=icon('heart')+'<span class="badge wish-badge">0</span>'; else if(b.classList.contains('cart-open'))b.innerHTML=icon('bag')+'<span class="badge cart-badge">0</span>'; else if(b.classList.contains('mobile-menu-btn'))b.innerHTML=icon('menu');});});</script>
 
 <main>
-<section class="hero"><img src="https://images.unsplash.com/photo-1666887360684-8082fc98ebd2?auto=format&fit=crop&q=90&w=2200" alt="Profissional de saúde usando scrub em um ambiente contemporâneo"><div class="container hero-content"><span class="eyebrow">Gabs Scrubs / 2026</span><h1>Feito para quem não para.</h1><p>Scrubs com caimento, conforto e presença. Para trabalhar sério sem abrir mão de vestir bem.</p><div class="hero-actions"><a class="btn light" href="feminino.html">Comprar feminino</a><a class="btn ghost-light" href="masculino.html">Comprar masculino</a></div></div></section>
+<section class="hero-marquee" aria-label="Campanha Gabs Scrubs">
+  <div class="hero-marquee-track" aria-hidden="true">
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1666887360684-8082fc98ebd2?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1765896387398-1e1ae8d2eb85?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1642976482503-3f67b345dbac?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1769072610024-5b8a50f05c73?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1588776814546-daab30f310ce?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1666887360684-8082fc98ebd2?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1765896387398-1e1ae8d2eb85?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1642976482503-3f67b345dbac?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1769072610024-5b8a50f05c73?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+    <figure class="hero-model"><img src="https://images.unsplash.com/photo-1588776814546-daab30f310ce?auto=format&fit=crop&q=88&w=1100" alt=""></figure>
+  </div>
+  <div class="hero-marquee-copy"><div class="container"><span class="eyebrow">Gabs Scrubs / 2026</span><h1>Feito para quem não para.</h1><p>Scrubs com caimento, conforto e presença. Para trabalhar sério sem abrir mão de vestir bem.</p><div class="hero-actions"><a class="btn light" href="feminino.html">Comprar feminino</a><a class="btn ghost-light" href="masculino.html">Comprar masculino</a></div></div></div>
+</section>
 
 <section class="section" id="conjuntos"><div class="container"><div class="section-head"><div><span class="eyebrow">Escolha por categoria</span><h2 class="section-title">Sua rotina, seu corte.</h2></div><p class="section-kicker">Menos “uniforme”. Mais roupa de trabalho com intenção: proporção, cor, mobilidade e acabamento.</p></div><div class="categories">
 <a class="category-tile" href="feminino.html"><img src="https://images.unsplash.com/photo-1765896387398-1e1ae8d2eb85?auto=format&fit=crop&q=86&w=1200" alt="Scrubs femininos"><div class="tile-copy"><h3>Feminino</h3><span>Ver coleção →</span></div></a>
